@@ -4,8 +4,6 @@ using PositionsService.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-
 // SQLite database configuration
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -36,7 +34,7 @@ using (var scope = app.Services.CreateScope())
 
     context.Database.ExecuteSqlRaw("PRAGMA wal_checkpoint(TRUNCATE);");
 
-    SeedData.Initialize(services, context);  // Llamamos al SeedData
+    SeedData.Initialize(services, context);  // Calling the SeedData
 }
 
 // Configure the HTTP request pipeline.

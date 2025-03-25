@@ -41,12 +41,12 @@ namespace PositionsService.Data
             );
 
 
-            // Definicion de Foreign Keys
+            // Foreign Keys definitions
             modelBuilder.Entity<Position>()
                 .HasOne(p => p.Status)
                 .WithMany()
                 .HasForeignKey(p => p.PositionStatusID)
-                .OnDelete(DeleteBehavior.Restrict);  // Restrict para que no se borren las positions en caso de eliminar dicha posicion, solo se pone en null
+                .OnDelete(DeleteBehavior.Restrict);  
 
             modelBuilder.Entity<Position>()
                 .HasOne(p => p.Department)
@@ -67,8 +67,8 @@ namespace PositionsService.Data
 
             modelBuilder.Entity<Position>()
             .Property(p => p.Budget)
-            .HasColumnType("decimal(18,2)")  // Garantiza que sea un decimal con 2 decimales
-            .HasDefaultValue(0);  // Valor defecto a 0 por si acaso
+            .HasColumnType("decimal(18,2)")  
+            .HasDefaultValue(0);  // Default value to 0 just in case 
 
             modelBuilder.Entity<Position>()
             .ToTable(table => table

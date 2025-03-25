@@ -15,35 +15,19 @@ namespace PositionsService.Controllers
         {
             _context = context;
         }
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Position>>> GetPositions()
-        //{
-        //    // Obtener todas las cuentas
-        //    var cuentas = await _cuentaRepository.GetAllAsync();
-        //    return Ok(cuentas);
-        //}
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Position>>> GetPositions()
         {
-            //// Obtener todas las cuentas
-            //var positions = new List<Position> { new Position { 
-            //    PositionID = 1,
-            //    PositionNumber = "1111",
-            //    Title = "Software Engineer",
-            //    Budget = 15000
-            //}};
-            //return Ok(positions);
             try
             {
-                // Consultar todas las posiciones, incluyendo las entidades relacionadas (Status, Department, Recruiter)
                 var positions = await _context.Positions
                     .Include(p => p.Status)   
                     .Include(p => p.Department) 
                     .Include(p => p.Recruiter)  
                     .ToListAsync();  
 
-                return Ok(positions); // Retorna un código 200 (OK) con las posiciones
+                return Ok(positions);
             }
             catch (Exception ex)
             {

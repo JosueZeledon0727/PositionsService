@@ -3,7 +3,7 @@
     public class Position
     {
         public int PositionID { get; set; }
-        public required string PositionNumber { get; set; } // Tiene que ser unique (acordarme)
+        public required string PositionNumber { get; set; } 
         public required string Title { get; set; }
         public int PositionStatusID { get; set; }
         public int DepartmentID { get; set; }

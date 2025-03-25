@@ -6,10 +6,8 @@ namespace PositionsService.Data
     {
         public static void Initialize(IServiceProvider serviceProvider, DataContext context)
         {
-            // Asegúrate de que la base de datos esté creada
             context.Database.EnsureCreated();
 
-            // Verifica si ya existen datos en las tablas, si no, agrega datos de referencia
             if (!context.Departments.Any())
             {
                 context.Departments.AddRange(
@@ -40,7 +38,6 @@ namespace PositionsService.Data
                 context.SaveChanges();
             }
 
-            // Verifica si ya existen datos en la tabla Position, si no, agrega algunos registros de ejemplo
             if (!context.Positions.Any())
             {
                 context.Positions.AddRange(
