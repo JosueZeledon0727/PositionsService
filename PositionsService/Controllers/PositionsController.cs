@@ -118,13 +118,15 @@ namespace PositionsService.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPosition(int id, Position position)
+        public async Task<IActionResult> PutPosition(int id, PositionCreateDto position)
         {
             try
             {
-                if (id != position.PositionID)
+                var existingPosition = await _context.Positions.FirstOrDefaultAsync(p => p.PositionID == id);
+
+                if (existingPosition == null)
                 {
-                    return BadRequest("Position ID mismatch.");
+                    return NotFound("Position not found.");
                 }
 
                 // Verify that position number is not null or empty
@@ -139,7 +141,14 @@ namespace PositionsService.Controllers
                     return BadRequest("Budget must be non-negative.");
                 }
 
-                _context.Entry(position).State = EntityState.Modified;
+                existingPosition.PositionNumber = position.PositionNumber;
+                existingPosition.Title = position.Title;
+                existingPosition.PositionStatusID = position.PositionStatusID;
+                existingPosition.DepartmentID = position.DepartmentID;
+                existingPosition.RecruiterID = position.RecruiterID;
+                existingPosition.Budget = position.Budget;
+
+                _context.Entry(existingPosition).State = EntityState.Modified;
 
                 await _context.SaveChangesAsync();
 
