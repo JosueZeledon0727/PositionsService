@@ -1,0 +1,6 @@
+@PositionsService_HostAddress = http://localhost:5054
+
+GET {{PositionsService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
