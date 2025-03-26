@@ -4,6 +4,9 @@ using Moq;
 using PositionsService.Controllers;
 using PositionsService.Data;
 using PositionsService.Models;
+using PositionsService.Services;
+using PositionsService.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Xunit;
 
 namespace TestPositions
@@ -12,18 +15,26 @@ namespace TestPositions
     {
         private readonly DataContext _context;
         private readonly PositionsController _controller;
+        private readonly Mock<RabbitMqService> _mockRabbitMqService;
+        private readonly Mock<IHubContext<PositionHub>> _mockHubContext;
 
         public PositionsTest1()
         {
             var options = new DbContextOptionsBuilder<DataContext>()
-            .UseInMemoryDatabase("TestDatabase")  // Usamos una base de datos en memoria
+            .UseInMemoryDatabase("TestDatabase")  // Using db on memory
             .Options;
 
-            // Creamos el contexto con el "DbContextOptions" adecuado
+            // Creating context with the "DbContextOptions"
             _context = new DataContext(options);
 
-            // Ahora podemos crear el controlador con el contexto en memoria
-            _controller = new PositionsController(_context);
+            _mockHubContext = new Mock<IHubContext<PositionHub>>();
+
+            _mockRabbitMqService = new Mock<RabbitMqService>(_mockHubContext.Object);
+
+            // Creating controller with memory context
+            _controller = new PositionsController(_context, _mockHubContext.Object, _mockRabbitMqService.Object);
+
+
         }
 
         [Fact]
@@ -40,12 +51,13 @@ namespace TestPositions
                 Budget = -5000
             };
 
-            // Act: Intentar crear una nueva posición
+            // Act: Trying to create a new position
             var result = await _controller.PostPosition(newPosition);
 
-            // Assert: Verificar que la respuesta sea un BadRequest
+            // Assert: Verify the bad request response
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             Assert.Equal("Budget must be non-negative.", badRequestResult.Value);
         }
+
     }
 }
