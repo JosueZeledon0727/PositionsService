@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PositionsService.Data;
 using PositionsService.Models;
+using Microsoft.AspNetCore.SignalR;
+using PositionsService.Hubs;
 
 namespace PositionsService.Controllers
 {
@@ -11,9 +13,12 @@ namespace PositionsService.Controllers
     public class PositionsController : ControllerBase
     {
         private readonly DataContext _context;
-        public PositionsController(DataContext context)
+        private readonly IHubContext<PositionHub> _hubContext;
+
+        public PositionsController(DataContext context, IHubContext<PositionHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -86,6 +91,9 @@ namespace PositionsService.Controllers
                 // Adds new position
                 _context.Positions.Add(positionToInsert);
                 await _context.SaveChangesAsync();
+
+                // Notify Clients through SignalR
+                await _hubContext.Clients.All.SendAsync("PositionUpdated", positionToInsert.PositionNumber);
 
                 return CreatedAtAction(nameof(GetPosition), new { id = positionToInsert.PositionID }, positionToInsert);
             } 
