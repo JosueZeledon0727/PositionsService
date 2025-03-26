@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # Servicio de la API .NET Core
+  api:
+    build:
+      context: .  # Build inside PositionsService folder
+      dockerfile: Dockerfile  # Dockerfile inside the same folder
+    ports:
+      - "5054:8080"  # Map to port 5054 from container to 8080 exposed by API .Net Core
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RABBITMQ_HOST=rabbitmq  # Using RabbitMQ service instead of localhost
+    depends_on:
+      rabbitmq:
+        condition: service_healthy  # Wait and depends on RabbitMQ to be healthy (TODO: Could be improved on the API side to keep asking for a connection)
+
+  # RabbitMQ service
+  rabbitmq:
+    image: "rabbitmq:management"  # Using RabbitMQ official image
+    ports:
+      - "15672:15672"  # Admin port (access the UI)
+      - "5672:5672"    # Standard port for RabbitMQ
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      retries: 3
+      start_period: 30s
+      timeout: 30s
