@@ -43,6 +43,8 @@ using (var scope = app.Services.CreateScope())
 
     context.Database.ExecuteSqlRaw("PRAGMA wal_checkpoint(TRUNCATE);");
 
+    context.Database.Migrate(); // Making sure the db and its migrations are applied
+
     SeedData.Initialize(services, context);  // Calling the SeedData
 }
 
