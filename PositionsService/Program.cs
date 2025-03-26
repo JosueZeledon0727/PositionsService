@@ -1,15 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using PositionsService.Data;
 using PositionsService.Hubs;
+using PositionsService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 // SQLite database configuration
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddSignalR();
+
+builder.Services.AddSingleton<RabbitMqService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -21,7 +23,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builder.WithOrigins("http://localhost:3000")  // Allow any origin (only for the testing purpose, it should not be done on production environment)
+        builder.WithOrigins("http://localhost:3000")  // Allow specific origin
                .AllowAnyMethod()
                .AllowAnyHeader()
                .AllowCredentials();
@@ -29,6 +31,9 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+var rabbitMqService = app.Services.GetRequiredService<RabbitMqService>();
+rabbitMqService.ConsumeMessages();  // Consuming messages from RabbitMQ
 
 
 using (var scope = app.Services.CreateScope())

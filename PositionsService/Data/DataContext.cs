@@ -21,7 +21,7 @@ namespace PositionsService.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Data inicial para las tablas de referencia
+            // Initial data for reference tables
             modelBuilder.Entity<Department>().HasData(
                 new Department { DepartmentID = 1, DepartmentName = "HR" },
                 new Department { DepartmentID = 2, DepartmentName = "IT" },
@@ -46,7 +46,7 @@ namespace PositionsService.Data
                 .HasOne(p => p.Status)
                 .WithMany()
                 .HasForeignKey(p => p.PositionStatusID)
-                .OnDelete(DeleteBehavior.Restrict);  
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Position>()
                 .HasOne(p => p.Department)
@@ -60,14 +60,14 @@ namespace PositionsService.Data
                 .HasForeignKey(p => p.RecruiterID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // PositionNumber unico
+            // PositionNumber unique
             modelBuilder.Entity<Position>()
                 .HasIndex(p => p.PositionNumber)
                 .IsUnique();
 
             modelBuilder.Entity<Position>()
             .Property(p => p.Budget)
-            .HasColumnType("decimal(18,2)")  
+            .HasColumnType("decimal(18,2)")
             .HasDefaultValue(0);  // Default value to 0 just in case 
 
             modelBuilder.Entity<Position>()

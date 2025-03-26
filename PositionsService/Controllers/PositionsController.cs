@@ -5,6 +5,7 @@ using PositionsService.Data;
 using PositionsService.Models;
 using Microsoft.AspNetCore.SignalR;
 using PositionsService.Hubs;
+using PositionsService.Services;
 
 namespace PositionsService.Controllers
 {
@@ -14,11 +15,13 @@ namespace PositionsService.Controllers
     {
         private readonly DataContext _context;
         private readonly IHubContext<PositionHub> _hubContext;
+        private readonly RabbitMqService _rabbitMqService;
 
-        public PositionsController(DataContext context, IHubContext<PositionHub> hubContext)
+        public PositionsController(DataContext context, IHubContext<PositionHub> hubContext, RabbitMqService rabbitMqService)
         {
             _context = context;
             _hubContext = hubContext;
+            _rabbitMqService = rabbitMqService;
         }
 
         [HttpGet]
@@ -27,10 +30,10 @@ namespace PositionsService.Controllers
             try
             {
                 var positions = await _context.Positions
-                    .Include(p => p.Status)   
-                    .Include(p => p.Department) 
-                    .Include(p => p.Recruiter)  
-                    .ToListAsync();  
+                    .Include(p => p.Status)
+                    .Include(p => p.Department)
+                    .Include(p => p.Recruiter)
+                    .ToListAsync();
 
                 return Ok(positions);
             }
@@ -70,7 +73,7 @@ namespace PositionsService.Controllers
             {
                 return BadRequest("Budget must be non-negative.");
             }
-            
+
             if (await _context.Positions.AnyAsync(p => p.PositionNumber == position.PositionNumber))
             {
                 return Conflict("PositionNumber must be unique.");
@@ -92,14 +95,15 @@ namespace PositionsService.Controllers
                 _context.Positions.Add(positionToInsert);
                 await _context.SaveChangesAsync();
 
-                // Notify Clients through SignalR
-                await _hubContext.Clients.All.SendAsync("PositionUpdated", positionToInsert.PositionNumber);
+                // Sending message through RabbitMQ
+                string positionMessage = $"Position created with Position Number: {positionToInsert.PositionNumber}";
+                _rabbitMqService.PublishMessage(positionMessage);
 
                 return CreatedAtAction(nameof(GetPosition), new { id = positionToInsert.PositionID }, positionToInsert);
-            } 
+            }
             catch (DbUpdateException ex)    // If there's an error with the DB
             {
-                
+
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
             catch (Exception ex)
