@@ -95,9 +95,9 @@ namespace PositionsService.Controllers
                 _context.Positions.Add(positionToInsert);
                 await _context.SaveChangesAsync();
 
-                // Sending message through RabbitMQ
-                string positionMessage = $"Position created with Position Number: {positionToInsert.PositionNumber}";
-                _rabbitMqService.PublishMessage(positionMessage);
+                // Publish message for insert
+                string insertMessage = $"Position inserted with Position Number: {positionToInsert.PositionNumber}";
+                _rabbitMqService.PublishMessage(insertMessage);
 
                 return CreatedAtAction(nameof(GetPosition), new { id = positionToInsert.PositionID }, positionToInsert);
             }
@@ -148,6 +148,10 @@ namespace PositionsService.Controllers
 
                 await _context.SaveChangesAsync();
 
+                // Publish message for update
+                string updateMessage = $"Position updated with Position Number: {existingPosition.PositionNumber}";
+                _rabbitMqService.PublishMessage(updateMessage);
+
                 return NoContent();
             }
             catch (DbUpdateException ex)
@@ -173,6 +177,10 @@ namespace PositionsService.Controllers
 
                 _context.Positions.Remove(position);    // Delete from db
                 await _context.SaveChangesAsync();
+
+                // Publish message for delete
+                string deleteMessage = $"Position deleted with Position Number: {position.PositionNumber}";
+                _rabbitMqService.PublishMessage(deleteMessage);
 
                 return NoContent();
             }

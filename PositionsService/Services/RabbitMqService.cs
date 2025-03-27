@@ -69,11 +69,47 @@ namespace PositionsService.Services
                 var message = Encoding.UTF8.GetString(body);
                 Console.WriteLine($" [x] Received: {message}");
 
-                // Notify to the clients using SignalR
-                await _hubContext.Clients.All.SendAsync("PositionUpdated", message);
+                // Notify to the clients using SignalR based on action contained in message
+                var action = GetActionFromMessage(message);
+
+                switch (action)
+                {
+                    case "insert":
+                        await _hubContext.Clients.All.SendAsync("PositionInserted", message);
+                        break;
+
+                    case "update":
+                        await _hubContext.Clients.All.SendAsync("PositionUpdated", message);
+                        break;
+
+                    case "delete":
+                        await _hubContext.Clients.All.SendAsync("PositionDeleted", message);
+                        break;
+
+                    default:
+                        Console.WriteLine("Unknown action type in message.");
+                        break;
+                }
             };
 
             channel.BasicConsume(queue: _queueName, autoAck: true, consumer: consumer);
+        }
+
+        private string GetActionFromMessage(string message)
+        {
+            if (message.Contains("insert"))
+            {
+                return "insert";
+            }
+            else if (message.Contains("update"))
+            {
+                return "update";
+            }
+            else if (message.Contains("delete"))
+            {
+                return "delete";
+            }
+            return "unknown";
         }
     }
 }

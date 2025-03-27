@@ -108,8 +108,9 @@ const CreateEditPage: React.FC = () => {
 
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label>Position Number</label>
+                    <label htmlFor="positionNumber">Position Number</label>
                     <input
+                        id="positionNumber"
                         type="text"
                         name="positionNumber"
                         value={position.positionNumber}
@@ -120,8 +121,9 @@ const CreateEditPage: React.FC = () => {
                 </div>
 
                 <div className="form-group">
-                    <label>Title</label>
+                    <label htmlFor='title'>Title</label>
                     <input
+                        id="title"
                         type="text"
                         name="title"
                         value={position.title}
@@ -131,8 +133,9 @@ const CreateEditPage: React.FC = () => {
                 </div>
 
                 <div className="form-group">
-                    <label>Position Status</label>
+                    <label htmlFor="positionStatusID">Position Status</label>
                     <select
+                        id="positionStatusID"
                         name="positionStatusID"
                         value={position.positionStatusID}
                         onChange={handleChange}
@@ -147,8 +150,9 @@ const CreateEditPage: React.FC = () => {
                 </div>
 
                 <div className="form-group">
-                    <label>Department</label>
+                    <label htmlFor='departmentID'>Department</label>
                     <select
+                        id="departmentID"
                         name="departmentID"
                         value={position.departmentID}
                         onChange={handleChange}
@@ -163,8 +167,9 @@ const CreateEditPage: React.FC = () => {
                 </div>
 
                 <div className="form-group">
-                    <label>Recruiter</label>
+                    <label htmlFor='recruiterID'>Recruiter</label>
                     <select
+                        id="recruiterID"
                         name="recruiterID"
                         value={position.recruiterID}
                         onChange={handleChange}
@@ -179,8 +184,9 @@ const CreateEditPage: React.FC = () => {
                 </div>
 
                 <div className="form-group">
-                    <label>Budget</label>
+                    <label htmlFor='budget'>Budget</label>
                     <input
+                        id="budget"
                         type="number"
                         name="budget"
                         value={position.budget}

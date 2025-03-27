@@ -68,10 +68,24 @@ const MainPositionsPage: React.FC = () => {
         startConnection();
 
         // Handling updates on SignalR
-        connectionRef.current?.on('PositionUpdated', (position: string) => {
+        connectionRef.current?.on('PositionInserted', (position: string) => {
             if (isMounted.current) {
                 console.log(`Message: ${position}`);
                 fetchPositions(); // Reload the Positions based on message received
+            }
+        });
+
+        connectionRef.current?.on('PositionUpdated', (position: string) => {
+            if (isMounted.current) {
+                console.log(`Message: ${position}`);
+                fetchPositions();
+            }
+        });
+
+        connectionRef.current?.on('PositionDeleted', (position: string) => {
+            if (isMounted.current) {
+                console.log(`Message: ${position}`);
+                fetchPositions();
             }
         });
 
