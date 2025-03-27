@@ -1,24 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Department, Position, PositionStatus } from '../../types/Types'; // Importamos la interfaz Position
+import { Position } from '../../types/Types'; // Importamos la interfaz Position
 import './MainPositionsPage.css';
 import axios from 'axios';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
+import { useApiData } from '../../hooks/useApiData';
 
 const MainPositionsPage: React.FC = () => {
     const [positions, setPositions] = useState<Position[]>([]);
-    const [departments, setDepartments] = useState<Department[]>([]);
-    const [statuses, setStatuses] = useState<PositionStatus[]>([]);
-
     const [filter, setFilter] = useState<string>('');
     const [selectedDepartment, setSelectedDepartment] = useState<string>(''); // Department Filter
-    const [selectedStatus, setSelectedStatus] = useState<string>(''); // Statuses Flter
-
+    const [selectedStatus, setSelectedStatus] = useState<string>(''); // Statuses Filter
     const [error, setError] = useState<string>('');
+
+    const { departments, statuses, loading: apiLoading, error: apiError } = useApiData();
 
     // API URL
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5054';  // Fallback to localhost if not defined
-
 
     const connectionRef = useRef<HubConnection | null>(null);
 
@@ -40,30 +38,8 @@ const MainPositionsPage: React.FC = () => {
             }
         };
 
-        // Get Departments
-        const fetchDepartments = async () => {
-            try {
-                const response = await axios.get(`${apiUrl}/api/departments`);
-                setDepartments(response.data);
-            } catch (error) {
-                setError('Error on loading departments');
-            }
-        };
-
-        // Get Statuses
-        const fetchStatuses = async () => {
-            try {
-                const response = await axios.get(`${apiUrl}/api/positionstatuses`);
-                setStatuses(response.data);
-            } catch (error) {
-                setError('Error on loading statuses');
-            }
-        };
-
-        // Calling the 3 endpoints
+        // Calling the fetchPositions endpoint
         fetchPositions();
-        fetchDepartments();
-        fetchStatuses();
 
         const startConnection = async () => {
             console.log("Start Connection");
@@ -93,7 +69,7 @@ const MainPositionsPage: React.FC = () => {
         // Handling updates on SignalR
         connectionRef.current?.on('PositionUpdated', (position: string) => {
             if (isMounted.current) {
-                alert(`Message: ${position}`);
+                console.log(`Message: ${position}`);
                 fetchPositions(); // Reload the Positions based on message received
             }
         });
@@ -125,7 +101,7 @@ const MainPositionsPage: React.FC = () => {
         };
 
 
-    }, []);
+    }, [apiUrl]);
 
     // Filtering positions based on title or position number
     const filteredPositions = positions.filter((position) => {
@@ -157,6 +133,9 @@ const MainPositionsPage: React.FC = () => {
     if (error) {
         return <div>{error}</div>;
     }
+
+    if (apiLoading) return <div>Loading...</div>;
+    if (apiError) return <div>Error loading the data: {apiError}</div>;
 
     return (
         <div className='list'>

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { mockDepartments, mockPositions, mockRecruiters, mockStatuses } from '../../data/mockdata';
-import { Department, Position, PositionCreateDto, PositionStatus, Recruiter } from '../../types/Types';
+import { PositionCreateDto } from '../../types/Types';
 import { useNavigate, useParams } from 'react-router-dom';
 import './CreateEditPage.css';
 import axios from 'axios';
+import { useApiData } from '../../hooks/useApiData';
 
 const CreateEditPage: React.FC = () => {
     const [position, setPosition] = useState<PositionCreateDto>({
@@ -14,48 +14,16 @@ const CreateEditPage: React.FC = () => {
         recruiterID: 1,
         budget: 0
     });
-
-    const [departments, setDepartments] = useState<Department[]>([]);
-    const [statuses, setStatuses] = useState<PositionStatus[]>([]);
-    const [recruiters, setRecruiters] = useState<Recruiter[]>([]);
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const { positionId } = useParams<{ positionId: string }>(); // Getting the Position ID
     const navigate = useNavigate();
 
+    const { departments, statuses, recruiters, loading: apiLoading, error: apiError } = useApiData();
+
     // Loading position data if we are editing
     useEffect(() => {
-        const fetchDepartments = async () => {
-            try {
-                const response = await axios.get('http://localhost:5054/api/departments');
-                setDepartments(response.data);
-            } catch (error) {
-                setError('Error al cargar los departamentos.');
-            }
-        };
-
-        const fetchStatuses = async () => {
-            try {
-                const response = await axios.get('http://localhost:5054/api/positionstatuses');
-                setStatuses(response.data);
-            } catch (error) {
-                setError('Error al cargar los estados.');
-            }
-        };
-
-        const fetchRecruiters = async () => {
-            try {
-                const response = await axios.get('http://localhost:5054/api/recruiters');
-                setRecruiters(response.data);
-            } catch (error) {
-                setError('Error al cargar los reclutadores.');
-            }
-        };
-
-        fetchDepartments();
-        fetchStatuses();
-        fetchRecruiters();
 
         if (positionId) {
             setIsEditMode(true);
@@ -122,6 +90,10 @@ const CreateEditPage: React.FC = () => {
     };
 
 
+    // Handling loading and errors from the API
+    if (apiLoading) return <div>Loading...</div>;
+    if (apiError) return <div>{apiError}</div>;
+
     return (
         <div className='creation-edit-page'>
             <button className="back-button" onClick={handleBack}>
@@ -140,7 +112,7 @@ const CreateEditPage: React.FC = () => {
                         value={position.positionNumber}
                         onChange={handleChange}
                         required
-                        disabled={isEditMode} // No permitir modificar el número de posición en el modo de edición
+                        disabled={isEditMode} // Not allowing to update the Position Number on Edit Mode
                     />
                 </div>
 

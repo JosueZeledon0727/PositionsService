@@ -1,29 +1,27 @@
-# Etapa 1: Construir la app de React
+# Stage 1: Build the React app
 FROM node:18 AS build
 
-# Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar package.json y package-lock.json para instalar dependencias
+# Copy package.json and package-lock.json to install dependencies
 COPY package.json package-lock.json ./
 
-# Instalar las dependencias de la app
+# Install the app dependencies
 RUN npm install
 
-# Copiar el resto de los archivos del proyecto
+# Copy the rest of the project files
 COPY . .
 
-# Construir la app de React para producción
+# Build the React app for production
 RUN npm run build
 
-# Etapa 2: Servir la app con Nginx
+# Stage 2: Serve the app with Nginx
 FROM nginx:alpine
 
-# Copiar los archivos de la app construida al directorio donde Nginx busca los archivos estáticos
+# Copy the built app files to the directory where Nginx looks for static files
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Exponer el puerto 80 (puerto por defecto de Nginx)
+# Expose port 80 (default port for Nginx)
 EXPOSE 80
 
-# Ejecutar Nginx en el contenedor
 CMD ["nginx", "-g", "daemon off;"]
