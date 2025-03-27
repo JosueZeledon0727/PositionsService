@@ -1,0 +1,118 @@
+.main-title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+input[type="text"],
+select {
+    padding: 8px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+select {
+    width: 200px;
+}
+
+.list {
+    width: 90%;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    border-radius: 8px;
+    justify-content: center !important;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.table {
+    margin-top: 5%;
+    margin-bottom: 5%;
+    /* For centering the table */
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.table th,
+.table td {
+    padding: 12px 20px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.table th {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.table td {
+    background-color: #f9f9f9;
+    color: #444;
+    font-size: 1rem;
+}
+
+.table tr:nth-child(even) td {
+    background-color: #f2f2f2;
+}
+
+.table tr:hover td {
+    background-color: #f1f1f1;
+}
+
+.table .actionButtons {
+    display: flex;
+    gap: 8px;
+}
+
+.table .button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.table .button:hover {
+    background-color: #0056b3;
+}
+
+.table .deleteButton {
+    background-color: #dc3545;
+}
+
+.table .deleteButton:hover {
+    background-color: #c82333;
+}
+
+
+.linkButton {
+    background-color: #007bff;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.linkButton:hover {
+    background-color: #0056b3;
+}
+
+.createButton {
+    margin: 10px;
+}

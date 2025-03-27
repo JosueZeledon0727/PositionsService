@@ -14,6 +14,7 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy  # Wait and depends on RabbitMQ to be healthy (TODO: Could be improved on the API side to keep asking for a connection)
+    container_name: positions-api
 
   # RabbitMQ service
   rabbitmq:
@@ -30,3 +31,16 @@ services:
       retries: 3
       start_period: 30s
       timeout: 30s
+
+  # React Service
+  react-app:
+    build:
+      context: ./positions-app  # Folder where the React app is located
+      dockerfile: Dockerfile  # Dockerfile file inside positions-app folder
+    ports:
+      - "3000:80"  # Map to port 3000 from container to 80 exposed by React image
+    environment:
+      - REACT_APP_API_URL=${REACT_APP_API_URL_DOCKER}
+    depends_on:
+      - api 
+    container_name: react-positions-app
