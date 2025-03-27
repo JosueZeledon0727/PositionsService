@@ -5,6 +5,7 @@ import './MainPositionsPage.css';
 import axios from 'axios';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { useApiData } from '../../hooks/useApiData';
+import { toast } from 'react-toastify';
 
 const MainPositionsPage: React.FC = () => {
     const [positions, setPositions] = useState<Position[]>([]);
@@ -120,9 +121,14 @@ const MainPositionsPage: React.FC = () => {
 
     const handleDelete = async (positionID: number) => {
         try {
+            // Before deleting, request user confirmation
+            const confirmation = window.confirm('Do you want to delete this position?');
+            if (!confirmation) return;
+
             const response = await axios.delete(`${apiUrl}/api/positions/${positionID}`);
             if (response.status === 204) {
                 setPositions(positions.filter((position) => position.positionID !== positionID));
+                toast.success('Position deleted successfully!');
             }
         } catch (error) {
             setError('Error on deleting position');

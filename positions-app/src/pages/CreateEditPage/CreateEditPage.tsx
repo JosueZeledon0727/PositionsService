@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import './CreateEditPage.css';
 import axios from 'axios';
 import { useApiData } from '../../hooks/useApiData';
+import { toast } from 'react-toastify';
 
 const CreateEditPage: React.FC = () => {
     const [position, setPosition] = useState<PositionCreateDto>({
@@ -69,12 +70,14 @@ const CreateEditPage: React.FC = () => {
                     recruiterID: position.recruiterID
                 });
                 if (response.status === 204) {
+                    toast.success('Position updated successfully!');
                     navigate('/');
                 }
             } else {
                 // Creating a new position
                 const response = await axios.post('http://localhost:5054/api/positions', position);
                 if (response.status === 201) {
+                    toast.success('Position created successfully!');
                     navigate('/');
                 }
             }
