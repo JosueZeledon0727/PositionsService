@@ -15,6 +15,9 @@ Positions Service is a web application built with React for the frontend, .NET C
 - Manage positions, departments, and their statuses.
 - Real-time updates via SignalR when a position is updated.
 - User-friendly interface for searching and filtering positions.
+<br>
+<br>
+<br>
 
 ## Setup
 
@@ -46,6 +49,51 @@ This will start the following services:
 
 ### 4. Access the application
 Open your browser and navigate to http://localhost:3000 to access the React app.
+<br>
+<br>
+<br>
+## Testing
+This project includes tests for both the .NET Core backend and the React frontend.
+
+### Backend (.NET Core)
+
+The project includes unit tests in the TestPositions directory. 
+
+#### Run Backend test
+To run the tests for .NET Core, follow these steps:
+
+1. Open a terminal in the **PositionsService** directory.
+
+2. Run the following commands to restore dependencies and execute the tests:
+
+```bash
+dotnet restore
+
+# Run the tests
+dotnet test TestPositions
+```
+
+### Frontend (React)
+
+The frontend is tested using Jest and React Testing Library.
+
+#### Run Frontend test
+To run the frontend tests, follow these steps:
+
+1. Ensure dependencies are properly installed
+```bash
+npm install
+```
+
+2. Run the tests with the command:
+```bash
+npm test
+```
+
+&ensp;This will run Jest and display the tests that are executed in the terminal.
+
+<br>
+<br>
 
 ## Screenshots
 
